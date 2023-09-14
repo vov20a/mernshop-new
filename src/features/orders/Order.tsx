@@ -12,7 +12,7 @@ type OrderProps = {
 }
 
 const Order = ({ order }: OrderProps) => {
-    // console.log(order)
+    // console.log(order.productsInfo[0]?.product?._id)
     const navigate = useNavigate();
 
     const currentCurrency = useSelector(selectCurrentCurrency)
@@ -29,7 +29,7 @@ const Order = ({ order }: OrderProps) => {
                 <td className={`table__cell`}> {order.phone} </td>
                 <td className={`table__cell`}> {order.user.username} </td>
                 <td className={`table__cell`}> {order.productsInfo.map((productInfo, index) =>
-                    <span key={index}><Link to={`/dash/products/${productInfo?.product._id}`}>{productInfo.product.title}:{productInfo.count} .lbs</Link>, </span>
+                    <span key={index}><Link to={`/dash/products/${productInfo?.product?._id}`}>{productInfo?.product?.title}:{productInfo?.count} .lbs</Link>, </span>
                 )} </td>
                 <td className={`table__cell`}> {new Date(order.createdAt).toLocaleString('ru-RU', {
                     day: 'numeric',
