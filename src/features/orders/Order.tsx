@@ -12,6 +12,7 @@ type OrderProps = {
 }
 
 const Order = ({ order }: OrderProps) => {
+
     // console.log(order.productsInfo[0]?.product?._id)
     const navigate = useNavigate();
 
