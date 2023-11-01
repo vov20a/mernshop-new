@@ -13,6 +13,8 @@ import { Button } from "react-bootstrap"
 import { selectPrdtsFromAllPrdts } from "../../utils/selectPrdtsFromAllPrdts"
 import { selectedProductsToproductInfo } from "../../utils/selectedProductsToProductInfo"
 import CountProductModal from "../../components/CountProductModal"
+import { useSelector } from "react-redux"
+import { selectCurrentCurrency } from "../currencies/currencySlice"
 
 
 interface EditOrderFormProps {
@@ -26,6 +28,7 @@ const PHONE_REGEX = /^(\+7|8)( |-)?\d{3}( |-)?\d{3}( |-)?\d{2}( |-)?\d{2}$/
 
 const EditOrderForm = ({ order, products, users }: EditOrderFormProps) => {
     // console.log('first', order)
+    const currentCurrency = useSelector(selectCurrentCurrency)
 
     const { isManager, isAdmin } = useAuth()
 
@@ -111,7 +114,12 @@ const EditOrderForm = ({ order, products, users }: EditOrderFormProps) => {
 
     const onSaveOrderClicked = async (e: React.MouseEvent<HTMLButtonElement>) => {
         if (canSave) {
-            await updateOrder({ id: order.id, fullName, email, phone, user: userId, totalPrice, productsInfo: productsInfo })
+            await updateOrder({
+                id: order.id, fullName, email, phone,
+                user: userId,
+                totalPrice: +(totalPrice / currentCurrency.value).toFixed(1),
+                productsInfo: productsInfo
+            })
         }
     }
 
@@ -211,13 +219,13 @@ const EditOrderForm = ({ order, products, users }: EditOrderFormProps) => {
                     onChange={onPhoneChanged}
                 />
                 <label className="form__label" htmlFor="totalPrice">
-                    Total Price,$:</label>
+                    Total Price,`{currentCurrency.code}`:</label>
                 <input
                     className={`form__input ${validTotalPriceClass}`}
                     id="totalPrice"
                     name="totalPrice"
                     type="number"
-                    value={totalPrice}
+                    value={+(totalPrice * currentCurrency.value).toFixed(1)}
                     onChange={() => { }}
                 />
                 <label className="form__label form__checkbox-container" htmlFor="order-products">

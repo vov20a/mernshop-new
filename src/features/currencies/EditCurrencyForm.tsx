@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { ICurrency } from "../../types/ICurrency"
+import { useActions } from "../../hooks/actions"
+
 
 const TITLE_REGEX = /^[A-z]{3,20}$/
 const CODE_REGEX = /^\W{1}$/
@@ -51,26 +53,41 @@ const EditCurrencyForm = ({ currency }: EditCurrencyFormProps) => {
     }, [value])
 
     useEffect(() => {
-        if (isSuccess || isDelSuccess) {
+        if (isSuccess) {
             setTitle('')
             setCode('')
             setValue('')
             setBase(false)
+            //возвращаемся в  PreCurrencyList
             navigate('/dash/currencies')
         }
-    }, [isSuccess, isDelSuccess, navigate])
+    }, [isSuccess, navigate])
+    useEffect(() => {
+        if (isDelSuccess) {
+            setTitle('')
+            setCode('')
+            setValue('')
+            setBase(false)
+            //возвращаемся в CurrencyList, а не PreCurrencyList
+            navigate('/dash/currencies/value')
+        }
+    }, [isDelSuccess, navigate])
 
     const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)
     const onCodeChanged = (e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value)
     const onValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
     const onBaseChanged = (e: React.ChangeEvent<HTMLSelectElement>) => setBase(e.target.value === 'false' ? false : true)
 
+    const { deleteCurrency: deleteCurrentCurrency } = useActions();
+
     const onSaveCurrencyClicked = async (e: React.MouseEvent<HTMLButtonElement>) => {
         await updateCurrency({ id: currency?.id, title, code, value, base })
     }
 
     const onDeleteCurrencyClicked = async () => {
+
         if (currency?.id) await deleteCurrency({ id: currency.id })
+        if (currency) deleteCurrentCurrency(currency)
     }
 
     const canSave = [validTitle, validCode, validValue].every(Boolean) && !isLoading;

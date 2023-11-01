@@ -54,7 +54,7 @@ const Header = () => {
                             </Col>
                             <Col sm={4}>
                                 <div className="top-header-right">
-                                    <div className="down-top top-down">
+                                    <div className="down-top top-up">
                                         <div className="button-dash" title="Change currency">
                                             <CurrencyElement background='#f97e76' />
                                         </div>
@@ -108,7 +108,7 @@ const Header = () => {
                                         </ul>
                                     </Col>
                                     <Col md={3}>
-                                        {!pathname.includes('/cart') && <div className="cart"><Link to="/cart"><span> </span>{!totalPrice ? `CART` : totalPrice * currentCurrency.value}</Link></div>}
+                                        {!pathname.includes('/cart') && currentCurrency && <div className="cart"><Link to="/cart"><span> </span>{!totalPrice ? `CART` : (totalPrice * currentCurrency.value).toFixed(1)}</Link></div>}
                                     </Col>
                                 </div>
                             </Col>

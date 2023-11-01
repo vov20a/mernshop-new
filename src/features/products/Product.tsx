@@ -33,7 +33,7 @@ const Product = ({ productId }: ProductProps) => {
                 <td className={`table__cell`}> {product.title} </td>
                 <td className={`table__cell`}><img width='50px' src={process.env.REACT_APP_API_URL + '/uploads/' + product.productImg} /> </td>
                 <td className={`table__cell`}> {product.description} </td>
-                <td className={`table__cell`}> {product.price * currentCurrency.value} </td>
+                <td className={`table__cell`}> {+(product.price * currentCurrency.value).toFixed(1)} </td>
                 <td className={`table__cell`}> {product.rating} </td>
                 <td className={`table__cell`}> {product.category.title} </td>
                 <td className={`table__cell`}> {new Date(product.createdAt).toLocaleString('ru-RU', {

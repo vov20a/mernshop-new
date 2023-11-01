@@ -46,7 +46,7 @@ const Order = ({ order }: OrderProps) => {
                     hour: 'numeric',
                     minute: 'numeric'
                 })} </td>
-                <td className={`table__cell`}>{order.totalPrice * currentCurrency.value}</td>
+                <td className={`table__cell`}>{+(order.totalPrice * currentCurrency.value).toFixed(1)}</td>
                 <td className={`table__cell`}>
                     <button className="icon-button table__button" onClick={handleEdit} >
                         <FontAwesomeIcon icon={faPenToSquare} />

@@ -1,14 +1,19 @@
-import { useGetCurrenciesQuery } from './currenciesApiSlice';
+import { useGetCurrenciesQuery, useUpdateCurrencyValuesMutation } from './currenciesApiSlice';
 import Currency from './Currency';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
-import { ICurrency } from '../../types/ICurrency';
-import { EntityState, EntityId } from '@reduxjs/toolkit';
-
+import { EntityId } from '@reduxjs/toolkit';
 
 
 const CurrenciesList = () => {
     useTitle('Currencies List');
+    const date = new Date().toLocaleString('ru-RU', {
+        // day: 'numeric',
+        // month: 'long',
+        // year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+    })
 
     const {
         data: currencies,
@@ -37,9 +42,14 @@ const CurrenciesList = () => {
 
         const tableContent = ids?.length && ids.map((currecyId: EntityId) => <Currency key={currecyId} currency={entities[currecyId]} />);
 
+        const arr: (string | undefined)[] = [];
+
         content = (
             <>
-                <h1>Family Categories</h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', justifyItems: 'center', marginTop: 10, lineHeight: '10px' }}>
+                    <h1>Family Currencies</h1>
+                    <span style={{ position: 'relative', top: 20 }}>{date}</span>
+                </div>
                 <table className="table table__currencies">
                     <thead className="table__thead">
                         <tr>

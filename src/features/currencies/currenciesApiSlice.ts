@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { apiSlice } from '../../app/api/apiSlice'
 import { ICurrency } from '../../types/ICurrency'
-import { setCurrency } from './currencySlice'
+import { setCurrencies, setCurrency } from './currencySlice'
 
 
 const currenciesAdapter: EntityAdapter<ICurrency> = createEntityAdapter({
@@ -23,16 +23,19 @@ export const currenciesApiSlice = apiSlice.injectEndpoints({
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
                     let filteredCurrency = {} as ICurrency | undefined;
+                    const { data } = await queryFulfilled
+                    const currencies: (ICurrency | undefined)[] = data?.ids.map(id => data.entities[id]);
+                    const filteredId = data.ids.find(id => data.entities[id]?.base === true)
                     if (localStorage.getItem('currentCurrency')) {
                         filteredCurrency = JSON.parse(localStorage.getItem('currentCurrency') ?? '')
                     } else {
-                        const { data } = await queryFulfilled
-                        const filteredId = data.ids.find(id => data.entities[id]?.base === true)
                         if (filteredId) {
                             if (data.entities[filteredId]) filteredCurrency = data.entities[filteredId]
                         }
                     }
+
                     if (filteredCurrency) dispatch(setCurrency(filteredCurrency))
+                    if (currencies) dispatch(setCurrencies(currencies))
 
                 } catch (err) {
                     console.log(err)
@@ -95,27 +98,38 @@ export const currenciesApiSlice = apiSlice.injectEndpoints({
                 { type: 'Currency', id: "LIST" }
             ]
         }),
-        updateCurrency: builder.mutation
-            <EntityState<ICurrency>,
-                {
-                    id: string | undefined,
-                    title: string | undefined,
-                    code: string | undefined,
-                    value: string | undefined,
-                    base: boolean | undefined
+        updateCurrency: builder.mutation<EntityState<ICurrency>,
+            {
+                id: string | undefined,
+                title: string | undefined,
+                code: string | undefined,
+                value: string | undefined,
+                base: boolean | undefined
+            }
+        >({
+            query: initialNote => ({
+                url: '/currencies',
+                method: 'PATCH',
+                body: {
+                    ...initialNote,
                 }
-            >({
-                query: initialNote => ({
-                    url: '/currencies',
-                    method: 'PATCH',
-                    body: {
-                        ...initialNote,
-                    }
-                }),
-                invalidatesTags: (result, error, arg) => [
-                    { type: 'Currency', id: arg.id }
-                ]
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Currency', id: arg.id }
+            ]
+        }),
+
+        updateCurrencyValues: builder.mutation<{ message: string }, { values: [string, number][] }>({
+            query: values => ({
+                url: '/currencies/values',
+                method: 'PATCH',
+                body: { ...values },
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Currency' }
+            ]
+        }),
+
         deleteCurrency: builder.mutation<EntityState<ICurrency>, { id: string }>({
             query: ({ id }) => ({
                 url: `/currencies`,
@@ -124,9 +138,15 @@ export const currenciesApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: (result, error, arg) => [
                 { type: 'Currency', id: arg.id }
-            ]
+            ],
         }),
     })
 })
 
-export const { useGetCurrenciesQuery, useGetOneCurrencyQuery, useAddNewCurrencyMutation, useUpdateCurrencyMutation, useDeleteCurrencyMutation } = currenciesApiSlice
+export const {
+    useGetCurrenciesQuery,
+    useGetOneCurrencyQuery,
+    useAddNewCurrencyMutation,
+    useUpdateCurrencyMutation,
+    useUpdateCurrencyValuesMutation,
+    useDeleteCurrencyMutation } = currenciesApiSlice

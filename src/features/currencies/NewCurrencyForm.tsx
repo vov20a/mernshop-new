@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from "@fortawesome/free-solid-svg-icons"
 import useTitle from "../../hooks/useTitle"
+import { useActions } from "../../hooks/actions"
+import { ICurrency } from "../../types/ICurrency"
+import { useSelector } from "react-redux"
+
 
 const TITLE_REGEX = /^[A-z]{3,20}$/
 const CODE_REGEX = /^\W{1}$/
@@ -58,6 +62,8 @@ const NewCurrencyForm = () => {
   const onBaseChanged = (e: React.ChangeEvent<HTMLSelectElement>) => setBase(e.target.value === 'false' ? false : true)
 
   const canSave = [validTitle, validCode, validValue].every(Boolean) && !isLoading;
+
+  const { setCurrencies } = useActions()
 
   const onSaveCurrencyClicked = async (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault()

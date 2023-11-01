@@ -3,8 +3,8 @@ import { useGetOneCategoryQuery } from '../features/categories/categoriesApiSlic
 import { PulseLoader } from 'react-spinners';
 import LastHome from './LastHome';
 
-const Home = () => {
 
+const Home = () => {
 
     const {
         data: category,

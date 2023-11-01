@@ -113,10 +113,10 @@ const CartPage = () => {
                                                 </button>
                                             </td>
                                             <td style={{ textAlign: "center" }}>
-                                                {product.price * currentCurrency.value}
+                                                {+(product.price * currentCurrency.value).toFixed(1)}
                                             </td>
                                             <td style={{ textAlign: "center" }}>
-                                                {product.price * currentCurrency.value * (product?.count ? product?.count : 1)}
+                                                {+(product.price * currentCurrency.value * (product?.count ? product?.count : 1)).toFixed(1)}
                                             </td>
                                         </tr>
                                     )}
@@ -133,7 +133,7 @@ const CartPage = () => {
                                         <td>&nbsp;</td>
                                         <td style={{ textAlign: "center" }}>Total</td>
                                         <td style={{ textAlign: "center" }}><strong>
-                                            {totalPrice * currentCurrency.value}
+                                            {+(totalPrice * currentCurrency.value).toFixed(1)}
                                         </strong></td>
                                     </tr>
                                 </tbody>

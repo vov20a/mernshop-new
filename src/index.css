@@ -69,6 +69,9 @@ ul.support li a {
 .top-down {
   padding: 0 0em 0 1em;
 }
+.top-up {
+  padding: 0 0em 0 1em;
+}
 /*----*/
 .bottom-header {
   border-bottom: 1px solid #ddd;
@@ -157,7 +160,7 @@ ul.login-top li a span {
   vertical-align: middle;
 }
 ul.login-top li button span {
-  background: url(./images/img-sprite.png) -143px -29px;
+  background: url(./images/img-sprite.png) -145px -29px;
   width: 26px;
   height: 26px;
   display: inline-block;
@@ -1789,7 +1792,10 @@ form.login-form p > a {
 }
 @media (max-width: 768px) {
   .top-down {
-    padding: 0 0em 0 0em;
+    padding: 0 10px 0 1em;
+  }
+  .top-up {
+    padding: 0 0em 0 16px;
   }
 
   .header-bottom-left {
@@ -1881,6 +1887,9 @@ form.login-form p > a {
   h3.cate {
     width: 100%;
   }
+  ul.login-top li button {
+    padding-left: 0;
+  }
 }
 @media (max-width: 640px) {
   .top-header-left {
@@ -1889,7 +1898,7 @@ form.login-form p > a {
   }
   .top-header-right {
     float: none;
-    width: 30%;
+    width: 50%;
     margin: 0 auto;
   }
   /* .header-bottom-right {
@@ -2058,8 +2067,20 @@ form.login-form p > a {
   .img-left-arrow {
     padding: 0 0 0 14.5em;
   }
+  .top-down {
+    padding: 0 0em 0 10px;
+  }
+  .top-up {
+    padding: 0 0em 0 0em;
+  }
 }
 @media (max-width: 320px) {
+  .top-down {
+    padding: 0 0em 0 0em;
+  }
+  .top-up {
+    padding: 0 0em 0 0em;
+  }
   ul.support li a {
     font-size: 1em;
   }

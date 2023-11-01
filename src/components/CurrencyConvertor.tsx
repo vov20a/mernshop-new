@@ -10,7 +10,7 @@ const CurrencyConvertor = ({ price }: CurrencyConvertorProps) => {
     const currentCurrency = useSelector(selectCurrentCurrency)
 
     return (
-        <>{currentCurrency.code}{price ? currentCurrency.value * price : 0}</>
+        <>{currentCurrency.code}{price ? +(currentCurrency.value * price).toFixed(1) : 0}</>
     )
 }
 
