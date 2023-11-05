@@ -22,8 +22,8 @@ export const createProductsHtmlTable = (items: IProductInfo[], totalPrice: numbe
     parts.push(`<tr>
       <td style="padding: 8px; border: 1px solid #ddd;">${item.product.title}</td>
       <td style="padding: 8px; border: 1px solid #ddd;">${item.count}</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">${item.product.price * currentCurrency.value}</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">${item.product.price * (item?.count ? item.count : 1) * currentCurrency.value}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">${(item.product.price * currentCurrency.value).toFixed(1)}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">${(item.product.price * (item?.count ? item.count : 1) * currentCurrency.value).toFixed(1)}</td>
     </tr>`);
   }
   const innerValue = parts.join(' ');
@@ -43,7 +43,7 @@ export const createProductsHtmlTable = (items: IProductInfo[], totalPrice: numbe
           <td style="padding: 8px; border: 1px solid #ddd;">Итого:</td>
           <td style="padding: 8px; border: 1px solid #ddd;">${totalCount}</td>
           <td></td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${totalPrice * currentCurrency.value}</td>
+          <td style="padding: 8px; border: 1px solid #ddd;">${(totalPrice * currentCurrency.value).toFixed(1)}</td>
         </tr>
       </tbody>
     </table>`;
