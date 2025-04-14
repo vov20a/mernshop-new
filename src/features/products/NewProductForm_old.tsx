@@ -21,92 +21,57 @@ const NewProductForm = ({ categories }: NewProductFormProps) => {
     const inputFileRef = React.useRef<HTMLInputElement>(null);
 
     const [title, setTitle] = React.useState('');
-    // const [productImg, setProductImg] = React.useState('');
-    const [stock, setStock] = React.useState<number>(0);
+    const [productImg, setProductImg] = React.useState('');
+    const [rating, setRating] = React.useState<number>(0);
     const [price, setPrice] = React.useState<number>(0);
     const [description, setDescription] = React.useState('');
     const [categoryId, setCategoryId] = React.useState('');
-    // const [file, setFile] = React.useState<File>();
-    const [images, setImages] = React.useState<(string | ArrayBuffer | null)[]>([]);
-    const [imagesPreview, setImagesPreview] = React.useState<(string | ArrayBuffer | null)[]>([]);
-
-
+    const [file, setFile] = React.useState<File>();
 
     React.useEffect(() => {
         if (isSuccess) {
             setTitle('');
             setDescription('');
-            // setProductImg('');
-            setStock(0);
+            setProductImg('');
+            setRating(0);
             setPrice(0);
             setCategoryId('');
-            // setFile(undefined)
-            setImages([])
-            setImagesPreview([])
+            setFile(undefined)
             navigate('/dash/products');
         }
     }, [isSuccess, navigate]);
 
-    const createProductImagesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let files: File[] = [];
-        if (event.target.files?.length) {
-            const filesObj = event.target.files;
-            files = Object.values(filesObj);
+
+    const handleChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const file = event.target.files[0];
+            console.log(file)
+            setProductImg(file.name)
+            setFile(file)
         }
-        setImages([]);
-        setImagesPreview([]);
-
-        files.forEach((file) => {
-            const reader = new FileReader();
-            // const arr: ((prevState: string[]) => string[]) | (string | ArrayBuffer)[] = [];
-            reader.onload = () => {
-                if (reader.readyState === 2) {
-                    setImagesPreview((old) => [...old, reader.result]);
-                    setImages((old) => [...old, reader.result]);
-                }
-            };
-            reader.readAsDataURL(file);//load in buffer
-        });
-    };
-
-    // const handleChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files) {
-    //         const file = event.target.files[0];
-    //         console.log(file)
-    //         setProductImg(file.name)
-    //         setFile(file)
-    //     }
-    // }
+    }
     const handleDeleteFile = (e: React.MouseEvent<HTMLButtonElement>) => {
-        setImagesPreview([]);
-        setImages([])
+        setFile(undefined);
+        setProductImg('')
     }
 
     const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value);
+    // const onProductImgChanged = (e: React.ChangeEvent<HTMLInputElement>) => setProductImg(e.target.files[0]);
+
+
+
     const onPriceChanged = (e: React.ChangeEvent<HTMLInputElement>) => setPrice(Number(e.target.value));
-    const onStockChanged = (e: React.ChangeEvent<HTMLInputElement>) => setStock(Number(e.target.value));
+    const onRatingChanged = (e: React.ChangeEvent<HTMLInputElement>) => setRating(Number(e.target.value));
     const onDescriptionChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value);
     const onCategoryIdChanged = (e: React.ChangeEvent<HTMLSelectElement>) => setCategoryId(e.target.value);
 
-    const canSave = [title, description, price, stock, categoryId].every(Boolean) && !isLoading && images.length > 0;
+    const canSave = [title, description, price, rating, categoryId].every(Boolean) && !isLoading && file;
 
     const onSaveProductClicked = (e: React.MouseEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         if (canSave) {
-            const myForm = new FormData();
-
-            myForm.set('title', title);
-            myForm.set('price', price.toString());
-            myForm.set('description', description);
-            myForm.set('category', categoryId);
-            myForm.set('Stock', stock.toString());
-
-            images.forEach((image) => {
-                myForm.append('images', image as (string | Blob));
-            });
-
-            addNewProduct(myForm);
+            const params = { title, description, price, rating, category: categoryId, file }
+            addNewProduct(params);
         }
     };
     const categoriesFormat = categorySimpleFormat(categories)
@@ -127,7 +92,7 @@ const NewProductForm = ({ categories }: NewProductFormProps) => {
 
     const errClass = isError ? 'errmsg' : 'offscreen';
     const validTitleClass = !title ? 'form__input--incomplete' : '';
-    const validStockClass = !stock ? 'form__input--incomplete' : '';
+    const validRatingClass = !rating ? 'form__input--incomplete' : '';
     const validPriceClass = !price ? 'form__input--incomplete' : '';
     const validDescriptionClass = !description ? 'form__input--incomplete' : '';
 
@@ -145,37 +110,20 @@ const NewProductForm = ({ categories }: NewProductFormProps) => {
                     </div>
                 </div>
 
-                <div>
-                    <input
-                        ref={inputFileRef}
-                        type="file"
-                        name="avatar"
-                        accept="image/*"
-                        onChange={createProductImagesChange}
-                        multiple
-                        hidden
-                    />
-                </div>
-                <div>
-                    {imagesPreview.map((image, index) => (
-                        <img width='150px' key={index} src={image as string} alt="Product Preview" />
-                    ))}
-                </div>
-
-                {images.length === 0 && <Button onClick={() => { if (inputFileRef.current) inputFileRef.current.click() }} variant="success">
+                {!file && <Button onClick={() => { if (inputFileRef.current) inputFileRef.current.click() }} variant="success">
                     Загрузить картинку
                 </Button>}
-                {images.length > 0 && <Button onClick={handleDeleteFile} variant="danger">
+                {file && <Button onClick={handleDeleteFile} variant="danger">
                     Удалить картинку
                 </Button>}
 
-                {/* <label className="form__label" htmlFor="productImg">
+                <label className="form__label" htmlFor="productImg">
                     Image:{productImg}
                 </label>
                 <input ref={inputFileRef} type="file" onChange={handleChangeFile} hidden />
                 <div className="flex object-cover py-2">
                     {file && <img src={URL.createObjectURL(file)} alt='' />}
-                </div> */}
+                </div>
 
                 <label className="form__label" htmlFor="title">
                     Title:
@@ -202,16 +150,16 @@ const NewProductForm = ({ categories }: NewProductFormProps) => {
                     onChange={onPriceChanged}
                 />
 
-                <label className="form__label" htmlFor="stock">
-                    Stock:
+                <label className="form__label" htmlFor="rating">
+                    Rating:
                 </label>
                 <input
                     type='number'
-                    className={`form__input ${validStockClass}`}
-                    id="stock"
-                    name="stock"
-                    value={stock}
-                    onChange={onStockChanged}
+                    className={`form__input ${validRatingClass}`}
+                    id="rating"
+                    name="rating"
+                    value={rating}
+                    onChange={onRatingChanged}
                 />
 
                 <label className="form__label" htmlFor="description">

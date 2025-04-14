@@ -3,7 +3,7 @@ import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { ICategory } from '../types/ICategory';
 import { Nav, NavDropdown } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+
 
 interface CategoriesListProps {
     arrayCategoryId: EntityId[];

@@ -1,22 +1,14 @@
 
-// import {/* addProduct, minusProduct, removeProduct, removeProductAll,*/ selectAllCart, selectTotalPrice } from '../features/cart/cartSlice'
 import { IProduct } from '../types/IProduct'
-// import { useAppDispatch } from '../app/store'
-import OrderForm from '../components/OrderForm'
 import useAuth from '../hooks/useAuth'
-// import { IProductInfo } from '../types/IOrder'
-// import { useSelector } from 'react-redux'
 import { useActions } from '../hooks/actions'
-import { Col, Container, Row } from 'react-bootstrap'
-import Category from '../components/Category'
+import { Button, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { useAppSelector } from '../hooks/redux'
 import { useSelector } from 'react-redux'
 import { selectCurrentCurrency } from '../features/currencies/currencySlice'
 
-
-const CartPage = () => {
-    // const dispatch = useAppDispatch();
+const MyCart = () => {
     const { addProduct, minusProduct, removeProduct, removeProductAll } = useActions()
 
     const currentCurrency = useSelector(selectCurrentCurrency)
@@ -26,12 +18,6 @@ const CartPage = () => {
     const products = ids.map((id) => {
         return entities[id] as unknown as IProduct
     })
-
-    //можно применить  useSelector(selectAllCart) или(и)  useAppSelector(state => state.cart)
-
-    // const cart = useSelector(selectAllCart) as unknown as IProduct[]
-    // const totalPrice = useSelector(selectTotalPrice)
-
 
     const onClickRemove = (product: IProduct) => {
         if (product.id) {
@@ -60,14 +46,11 @@ const CartPage = () => {
     return (
         <Container>
             <Row>
-                <Col md={4}>
-                    <Category />
-                </Col>
                 {products.length ?
-                    <Col md={8}>
+                    <Col md={12}>
                         <h4 className="title">
-                            <span className="pull-left "><span className="text">Your</span><span
-                                className="line"><strong>cart</strong></span></span>
+                            <span className="pull-left "><span className="line"><strong>Cart of {username}</strong></span></span>
+
                         </h4>
                         <div className="table-responsive ">
                             <table className="table__cart  table-striped checkout-table">
@@ -138,21 +121,16 @@ const CartPage = () => {
                                     </tr>
                                 </tbody>
                             </table>
+                            <Link to='/cart'><Button style={{ marginTop: '20px' }}>To Order Form</Button> </Link>
                         </div>
                     </Col> :
-                    <Col md={8}>
+                    <Col md={12}>
                         <h1>Cart is empty</h1>
                     </Col>
                 }
             </Row>
-            <Row>
-                <Col md={{ span: 8, offset: 4 }}>
-                    <OrderForm user={{ username, email, id }} currentCurrency={currentCurrency} />
-                </Col>
-            </Row>
-
         </Container>
     )
 }
 
-export default CartPage
+export default MyCart

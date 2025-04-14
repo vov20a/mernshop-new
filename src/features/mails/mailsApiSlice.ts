@@ -1,7 +1,5 @@
-import { createSelector, createEntityAdapter, EntityState, EntityAdapter } from '@reduxjs/toolkit'
+import { EntityState } from '@reduxjs/toolkit'
 import { apiSlice } from '../../app/api/apiSlice'
-import { IOrder } from '../../types/IOrder'
-import { RootState } from "../../app/store"
 import { IMail } from '../../types/IMail'
 
 // export interface ProductsResponse {
@@ -9,10 +7,10 @@ import { IMail } from '../../types/IMail'
 //     entities: { id: string }
 // };
 
-const mailsAdapter: EntityAdapter<IMail> = createEntityAdapter({
-    // sortComparer:()=>
-})
-const initialState = mailsAdapter.getInitialState({})
+// const mailsAdapter: EntityAdapter<IMail> = createEntityAdapter({
+//     // sortComparer:()=>
+// })
+// const initialState = mailsAdapter.getInitialState({})
 
 export const mailsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({

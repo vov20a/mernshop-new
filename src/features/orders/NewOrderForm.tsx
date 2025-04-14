@@ -17,7 +17,7 @@ interface NewOrderFormProps {
     products: IProduct[];
     users: IUser[];
 }
-const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+const EMAIL_REGEX = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/
 const PHONE_REGEX = /^(\+7|8)( |-)?\d{3}( |-)?\d{3}( |-)?\d{2}( |-)?\d{2}$/
 
 const NewOrderForm = ({ products, users }: NewOrderFormProps) => {
@@ -57,7 +57,7 @@ const NewOrderForm = ({ products, users }: NewOrderFormProps) => {
             else return sum += item.price;
         }, 0)
         setTotalPrice(total)
-    }, [simpleProducts])
+    }, [simpleProducts, products])
 
     useEffect(() => {
         setValidEmail(EMAIL_REGEX.test(email))

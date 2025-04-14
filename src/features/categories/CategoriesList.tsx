@@ -3,8 +3,7 @@ import Category from './Category';
 // import useAuth from '../../hooks/useAuth';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
-import { ICategory } from '../../types/ICategory';
-import { EntityState, EntityId } from '@reduxjs/toolkit';
+import { EntityId } from '@reduxjs/toolkit';
 import { categoryFormat } from '../../utils/categoryFormat';
 import CategorySelect from './CategorySelect';
 

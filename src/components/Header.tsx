@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from '../hooks/debounce'
 import CurrencyElement from './CurrencyElement'
 import { selectCurrentCurrency } from '../features/currencies/currencySlice'
+import { useActions } from '../hooks/actions'
 
 const Header = () => {
 
@@ -18,8 +19,11 @@ const Header = () => {
 
     const { pathname } = useLocation()
     const navigate = useNavigate();
-    const { username, isManager, isAdmin } = useAuth()
+    const { username, avatarUrl, isManager, isAdmin } = useAuth()
+
     const [sendLogout, { isLoading }] = useSendLogoutMutation();
+
+    const { removeProductAll } = useActions()
 
     const totalPrice = useSelector(selectTotalPrice)
 
@@ -34,8 +38,8 @@ const Header = () => {
 
     const onClickLogout = async () => {
         await sendLogout({ username });
+        removeProductAll();
         navigate('/login')
-
     }
 
     return (
@@ -96,7 +100,8 @@ const Header = () => {
                                 <div className="header-bottom-right" >
                                     <Col md={9}>
                                         {isLoading ? <PulseLoader color={'#000'} className='pulse-loader' /> :
-                                            <div className="account"><Link to='/account'>{username && <span> </span>}{username ? 'YOUR ACCOUNT' : ''}</Link></div>}
+                                            <div className="account"><Link to='/account'> {avatarUrl ? <img style={{ borderRadius: "50%", paddingRight: "10px" }} width='30px' src={avatarUrl} alt="avatar" /> : <span> </span>}
+                                                {username ? username : ''}</Link></div>}
 
                                         <ul className="login-top">
                                             {username ? <li><button className='button-logout' title="Logout" onClick={onClickLogout}><span> </span> LOGOUT</button></li> :
@@ -114,9 +119,9 @@ const Header = () => {
                             </Col>
                         </Row>
                     </div>
-                </div>
-            </div>
-        </Container>
+                </div >
+            </div >
+        </Container >
     );
 };
 

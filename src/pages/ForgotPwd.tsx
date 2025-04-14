@@ -21,7 +21,7 @@ const ForgotPwd: React.FC = () => {
     const [checkEmail, { isSuccess, isLoading, isError, error }] = useCheckEmailMutation()
 
     const onSubmit = async (values: { email: string }) => {
-        const email = await checkEmail(values)
+        await checkEmail(values)
     };
 
     return (

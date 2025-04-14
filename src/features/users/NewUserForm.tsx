@@ -5,13 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from "@fortawesome/free-solid-svg-icons"
 import { ROLES } from "../../config/roles"
 import useTitle from "../../hooks/useTitle"
+import { Button } from "react-bootstrap"
 
 const USER_REGEX = /^[A-z]{3,20}$/
-const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+const EMAIL_REGEX = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/
 
 const NewUserForm = () => {
     useTitle('techNotes: New User')
+
+    const inputAvatarFileRef = React.useRef<HTMLInputElement>(null);
 
     const [addNewUser, {
         isLoading,
@@ -29,6 +32,9 @@ const NewUserForm = () => {
     const [password, setPassword] = useState('')
     const [validPassword, setValidPassword] = useState(false)
     const [roles, setRoles] = useState(["Employee"])
+    const [avatar, setAvatar] = React.useState<(string | ArrayBuffer | null)>('');
+    const [avatarPreview, setAvatarPreview] = React.useState<(string | ArrayBuffer | null)>('');
+
 
     useEffect(() => {
         setValidUsername(USER_REGEX.test(username))
@@ -48,9 +54,34 @@ const NewUserForm = () => {
             setEmail('')
             setPassword('')
             setRoles([])
+            setAvatar('')
+            setAvatarPreview('')
             navigate('/dash/users')
         }
     }, [isSuccess, navigate])
+
+    const createAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        let files: File[] = [];
+        if (event.target.files?.length === 1) {
+            const fileObj = event.target.files;
+            files = Object.values(fileObj);
+        }
+        setAvatar('');
+        setAvatarPreview('');
+
+        files.forEach((file) => {
+            const reader = new FileReader();
+            // const arr: ((prevState: string[]) => string[]) | (string | ArrayBuffer)[] = [];
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setAvatarPreview(reader.result);
+                    setAvatar(reader.result);
+                }
+            };
+            reader.readAsDataURL(file);//load in buffer
+        });
+    };
 
     const onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)
     const onEmailChanged = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
@@ -63,13 +94,18 @@ const NewUserForm = () => {
         )
         setRoles(values)
     }
+    const handleDeleteFile = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setAvatarPreview('');
+        setAvatar('')
+    }
 
-    const canSave = [roles.length, validUsername, validEmail, validPassword].every(Boolean) && !isLoading
+
+    const canSave = [roles.length, validUsername, validEmail, validPassword, avatar !== ''].every(Boolean) && !isLoading
 
     const onSaveUserClicked = async (e: React.MouseEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (canSave) {
-            await addNewUser({ username, email, password, roles })
+            await addNewUser({ username, email, password, roles, avatar })
         }
     }
 
@@ -107,8 +143,28 @@ const NewUserForm = () => {
                         </button>
                     </div>
                 </div>
+                <div>
+                    <input
+                        ref={inputAvatarFileRef}
+                        type="file"
+                        name="avatar"
+                        accept="image/*"
+                        onChange={createAvatarChange}
+                        hidden
+                    />
+                </div>
+                <div>
+                    {avatarPreview && <img width='150px' src={avatarPreview as string} alt="Avatar Preview" />}
+                </div>
+
+                {!avatar && <Button onClick={() => { if (inputAvatarFileRef.current) inputAvatarFileRef.current.click() }} variant="success">
+                    Загрузить картинку
+                </Button>}
+                {avatar && <Button onClick={handleDeleteFile} variant="danger">
+                    Удалить картинку
+                </Button>}
                 <label className="form__label" htmlFor="username">
-                    Username: <span className="nowrap">[3-20 letters]</span></label>
+                    Username: <span className="nowrap">[4-30 letters]</span></label>
                 <input
                     className={`form__input ${validUserClass}`}
                     id="username"
@@ -154,7 +210,7 @@ const NewUserForm = () => {
                 >
                     {options}
                 </select>
-
+                <input type="submit" disabled={!canSave} value="Register" className="signUpBtn" />
             </form>
         </>
     )

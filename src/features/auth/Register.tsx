@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRegisterMutation } from './authApiSlice'
 import usePersist from '../../hooks/usePersist';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
 import { PulseLoader } from 'react-spinners';
 import { setCredentials } from './authSlice';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import Category from '../../components/Category';
+import AvatarPreview from '../../Profile.png'
 
 const USER_REGEX = /^[A-z ]{3,20}$/
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
@@ -16,6 +17,8 @@ const Register = () => {
 
     const userRef = useRef<HTMLInputElement>(null);
     const errRef = useRef<HTMLParagraphElement>(null);
+    const inputAvatarFileRef = React.useRef<HTMLInputElement>(null);
+
     const [username, setUsername] = useState('');
     const [validUsername, setValidUsername] = useState(false)
     const [email, setEmail] = useState('');
@@ -24,6 +27,9 @@ const Register = () => {
     const [validPassword, setValidPassword] = useState(false)
     const [errMsg, setErrMsg] = useState('');
     const [persist, setPersist] = usePersist();
+
+    const [avatar, setAvatar] = useState<string | ArrayBuffer | null>('');
+    const [avatarPreview, setAvatarPreview] = useState<string | ArrayBuffer | null>(AvatarPreview);
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -52,13 +58,14 @@ const Register = () => {
         setErrMsg('');
     }, [email, password, username]);
 
-    const canSave = [validUsername, validEmail, validPassword].every(Boolean) && !isLoading
+    const canSave = [validUsername, validEmail, validPassword, avatar].every(Boolean) && !isLoading
+
 
     const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            const { accessToken } = await register({ username, email, password }).unwrap();
+            const { accessToken } = await register({ username, email, password, avatar }).unwrap();
             dispatch(setCredentials({ accessToken }));
             setUsername('');
             setEmail('');
@@ -78,12 +85,36 @@ const Register = () => {
                 errRef.current.focus();
             }
         }
-    };
+    }
+
 
     const handleUsernameInput = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
     const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
     const handlePwdInput = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
     const handleToggle = () => setPersist((prev: boolean) => !prev);
+
+    const registerDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.name === 'avatar') {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setAvatarPreview(reader.result);
+                    setAvatar(reader.result);
+                }
+            };
+
+            reader.readAsDataURL(event.target.files ? event.target.files[0] : {} as Blob);
+        }
+        // else {
+        // setUser({ ...user, [event.target.name]: event.target.value });
+        //}
+    };
+
+    const handleDeleteFile = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setAvatarPreview('');
+        setAvatar('')
+    }
 
 
     const errClass = errMsg ? 'errmsg' : 'offscreen';
@@ -134,18 +165,8 @@ const Register = () => {
                                                 onChange={handleEmailInput}
                                                 required />
                                         </div>
-                                        <label htmlFor="persist" className="form__persist">
-                                            <input
-                                                type="checkbox"
-                                                className="form__checkbox checkbox"
-                                                id="persist"
-                                                onChange={handleToggle}
-                                                checked={persist}
-                                            />
-                                            <i> </i>Trust Me
-                                        </label>
+
                                         <div className="  register-bottom-grid">
-                                            <h3>LOGIN INFORMATION</h3>
                                             <div className="mation">
                                                 <span>Password<label>*[4-12 (A-z0-9!@#$%)]</label></span>
                                                 <input type="password"
@@ -156,6 +177,41 @@ const Register = () => {
                                                     required />
                                             </div>
                                         </div>
+                                        <div className="mation">
+                                            <h3>  Avatar</h3>
+                                            <div className="mation">
+
+                                                <input
+                                                    ref={inputAvatarFileRef}
+                                                    // className={`form__input ${validEmailClass}`}
+                                                    name="avatar"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={registerDataChange}
+                                                    hidden
+                                                />
+                                                <div>
+                                                    {avatarPreview && <img width='50px' src={avatarPreview as string} alt="Avatar Preview" />}
+                                                </div>
+
+                                                {!avatar && <Button onClick={() => { if (inputAvatarFileRef.current) inputAvatarFileRef.current.click() }} variant="success">
+                                                    Загрузить картинку
+                                                </Button>}
+                                                {avatar && <Button onClick={handleDeleteFile} variant="danger">
+                                                    Удалить картинку
+                                                </Button>}
+                                            </div>
+                                        </div>
+                                        <label htmlFor="persist" className="form__persist">
+                                            <input
+                                                type="checkbox"
+                                                className="form__checkbox checkbox"
+                                                id="persist"
+                                                onChange={handleToggle}
+                                                checked={persist}
+                                            />
+                                            <i> </i>Trust Me
+                                        </label>
                                         <input type="submit" disabled={!canSave} value="SUBMIT" />
                                     </form>
                                 </div>

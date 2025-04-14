@@ -2,9 +2,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { memo } from 'react';
-import { IOrder } from '../../types/IOrder';
+import { IOrder } from '../types/IOrder';
 import { useSelector } from 'react-redux';
-import { selectCurrentCurrency } from '../currencies/currencySlice';
+import { selectCurrentCurrency } from '../features/currencies/currencySlice';
 
 
 type OrderProps = {
@@ -47,11 +47,7 @@ const Order = ({ order }: OrderProps) => {
                     minute: 'numeric'
                 })} </td>
                 <td className={`table__cell`}>{+(order.totalPrice * currentCurrency.value).toFixed(1)}</td>
-                <td className={`table__cell`}>
-                    <button className="icon-button table__button" onClick={handleEdit} >
-                        <FontAwesomeIcon icon={faPenToSquare} />
-                    </button>
-                </td>
+
             </tr >
 
         );

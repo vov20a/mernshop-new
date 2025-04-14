@@ -30,7 +30,8 @@ const currencySlice = createSlice({
             const currencies = state.currencies
             if (state.currency.id === action.payload.id) {
                 const baseCurr = currencies.find(currency => {
-                    if (currency?.base === true) return currency
+                    if (currency?.base === true) { return currency }
+                    return { ...state };
                 })
                 if (baseCurr) state.currency = baseCurr
 

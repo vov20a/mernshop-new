@@ -1,32 +1,25 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
-import { useGetProductsQuery } from './productsApiSlice';
-import { memo } from 'react';
-import { EntityId } from '@reduxjs/toolkit';
-import { IProduct } from '../../types/IProduct';
+import React, { memo } from 'react'
+import { IProduct } from '../../types/IProduct'
 import { useSelector } from 'react-redux';
 import { selectCurrentCurrency } from '../currencies/currencySlice';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 
-type ProductProps = {
-    productId: EntityId;
+interface ProductAllProp {
+    product: IProduct,
+    categoryHandler: (cat: string) => void
 }
 
-const Product = ({ productId }: ProductProps) => {
+const ProductAll = ({ product, categoryHandler }: ProductAllProp) => {
 
     const currentCurrency = useSelector(selectCurrentCurrency)
-
-    const { product } = useGetProductsQuery('productsList', {
-        selectFromResult: ({ data }) => ({
-            product: data?.entities[productId] as IProduct,
-        }),
-    });
 
     const navigate = useNavigate();
 
     if (product) {
-        const handleEdit = () => navigate(`/dash/products/${productId}`);
+        const handleEdit = () => navigate(`/dash/products/${product._id}`);
 
         return (
             <tr className="table__row user" >
@@ -44,7 +37,7 @@ const Product = ({ productId }: ProductProps) => {
                 <td className={`table__cell`}> {+(product.price * currentCurrency.value).toFixed(1)} </td>
                 <td className={`table__cell`}> {product.rating.toFixed(1)} </td>
                 <td className={`table__cell`}> {product.Stock} </td>
-                <td className={`table__cell`}> {product.category.title} </td>
+                <td className={`table__cell`}><button onClick={() => categoryHandler(product.category._id)}> {product.category.title}</button> </td>
                 <td className={`table__cell`}> {new Date(product.createdAt).toLocaleString('ru-RU', {
                     day: 'numeric',
                     month: 'long',
@@ -67,9 +60,8 @@ const Product = ({ productId }: ProductProps) => {
             </tr >
         );
     } else return null;
+}
 
-};
+const memoizedProductAll = memo(ProductAll);
 
-const memoizedProduct = memo(Product);
-
-export default memoizedProduct;
+export default memoizedProductAll;

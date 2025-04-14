@@ -3,7 +3,7 @@ import useAuth from '../hooks/useAuth'
 import { Col, Container, Row, Table } from 'react-bootstrap'
 
 const AccountPage = () => {
-    const { username, email, status, } = useAuth()
+    const { username, email, status, avatarUrl } = useAuth()
     return (
         <Container>
             <Row>
@@ -14,13 +14,15 @@ const AccountPage = () => {
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
+                                        <th>Avatar</th>
                                         <th>Full Name</th>
                                         <th>Email</th>
-                                        <th>Username</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td><img width='50px' src={avatarUrl} alt='avatar' /></td>
                                         <td>{username}</td>
                                         <td>{email}</td>
                                         <td>{status}</td>

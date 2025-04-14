@@ -5,18 +5,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useActions } from '../hooks/actions';
 import CurrencyConvertor from './CurrencyConvertor';
 import { Rating } from '@mui/material';
-// import { useAppDispatch } from '../app/store';
-// import { addProduct } from '../features/cart/cartSlice';
 
 interface ProductProps {
     product: IProduct | undefined;
     md: number
 }
 
-const Product = ({ product, md }: ProductProps) => {
-
-    // const [rating, setRating] = React.useState<number | undefined>(product?.rating);
-
+const ProductCard = ({ product, md }: ProductProps) => {
     const { addProduct } = useActions()
     // const dispatch = useAppDispatch()
     const navigate = useNavigate()
@@ -25,13 +20,14 @@ const Product = ({ product, md }: ProductProps) => {
         addProduct({ ...product } as unknown as IProduct)
         navigate(`/cart`);
     }
+
     return (
-        <Col lg={md} >
+        <Col lg={md}>
             <div className="content_box">
-                <Link to={`/products/${product?.id}`}>
+                <Link to={`/products/${product?._id}`}>
                     <div className="left-grid-view grid-view-left">
-                        {product?.productImg && <img src={process.env.REACT_APP_API_URL + '/uploads/' + product.productImg} className="img-responsive watch-right" alt="" />}
-                        {product?.images && <img style={{ maxHeight: '285px' }} src={product.images ? product.images[0]?.url : ''} alt='' className="img-responsive watch-right" />}
+                        {product?.productImg && <img width="200px" src={process.env.REACT_APP_API_URL + '/uploads/' + product.productImg} className="img-responsive watch-right" alt="" />}
+                        {product?.images && <img width="200px" src={product.images ? product.images[0]?.url : ''} alt='' className="img-responsive watch-right" />}
                         <div className="mask">
                             <div className="info">Quick View</div>
                         </div>
@@ -58,8 +54,9 @@ const Product = ({ product, md }: ProductProps) => {
                 <div className="left-n "> <CurrencyConvertor price={product?.price} /></div>
                 <div className="now-get get-cart-in" onClick={addCartClick}>ADD TO CART</div>
             </div>
-        </Col >
+        </Col>
     )
+
 }
 
-export default Product
+export default ProductCard

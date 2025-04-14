@@ -41,6 +41,9 @@ const UsersList: React.FC = () => {
         <thead className="table__thead">
           <tr>
             <th scope="col" className="table__th user__username">
+              Avatar
+            </th>
+            <th scope="col" className="table__th user__username">
               Username
             </th>
             <th scope="col" className="table__th user__roles">
@@ -56,6 +59,6 @@ const UsersList: React.FC = () => {
     );
   }
 
-  return <>{content}</>;
+  return <><h3>List of All Users</h3>{content}</>;
 };
 export default UsersList;

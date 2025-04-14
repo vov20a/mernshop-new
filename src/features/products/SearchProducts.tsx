@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { IProductsCount, useGetCountQuery, useGetProductsQuery } from './productsApiSlice'
 import { PulseLoader } from 'react-spinners'
 import { pagesCount } from '../../utils/pagesCount'
@@ -7,10 +7,8 @@ import { Button, Col, Row } from 'react-bootstrap'
 import { EntityId } from '@reduxjs/toolkit'
 import Product from './Product'
 import PaginationElement from '../../components/PaginationElement'
-import { useDebounce } from '../../hooks/debounce'
 
 const SearchProducts = () => {
-    const navigate = useNavigate()
 
     const { state } = useLocation()
     const [search, setSearch] = useState(state)
@@ -119,6 +117,9 @@ const SearchProducts = () => {
                             </th>
                             <th scope="col" className="table__th">
                                 Rating
+                            </th>
+                            <th scope="col" className="table__th">
+                                Stock
                             </th>
                             <th scope="col" className="table__th">
                                 Category

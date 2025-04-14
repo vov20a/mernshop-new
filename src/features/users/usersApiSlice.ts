@@ -38,7 +38,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 } else return [{ type: 'User', id: 'LIST' }]
             }
         }),
-        addNewUser: builder.mutation<EntityState<IUser>, { username: string, email: string, password: string, roles: string[] }>({
+        addNewUser: builder.mutation<EntityState<IUser>, { username: string, email: string, password: string, roles: string[], avatar: string | ArrayBuffer | null }>({
             query: initialUserData => ({
                 url: '/users',
                 method: 'POST',
@@ -57,7 +57,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                     username: string | undefined,
                     email: string | undefined,
                     password?: string | undefined,
-                    roles: string[] | undefined
+                    roles: string[] | undefined,
+                    avatar: string | ArrayBuffer | null
                 }
             >({
                 query: initialUserData => ({

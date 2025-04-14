@@ -3,7 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 import Header from './Header'
 import Footer from './Footer'
-import useAuth from '../hooks/useAuth'
 import DashFooter from './DashFooter'
 
 const Layout = () => {
@@ -19,7 +18,7 @@ const Layout = () => {
     return (
         <>
             {adminPath ? <></> : <Header />}
-            <Container fluid>
+            <Container >
                 <Outlet />
             </Container>
             {adminPath ? <DashFooter /> : <Footer />}

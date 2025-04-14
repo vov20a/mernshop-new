@@ -45,6 +45,9 @@ const Welcome = () => {
       <p>
         <Link to="/dash/products">View Products</Link>
       </p>
+      <p>
+        <Link to="/dash/products/all">View Products All</Link>
+      </p>
 
       <p>
         <Link to="/dash/products/new">Add New Product</Link>

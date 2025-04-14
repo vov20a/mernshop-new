@@ -12,7 +12,7 @@ interface CurrencyElementProps {
 
 
 const CurrencyElement = ({ background }: CurrencyElementProps) => {
-    const { setCurrency, setCurrencies } = useActions()
+    const { setCurrency } = useActions()
 
     const { currencies, isSuccessCurr, } = useGetCurrenciesQuery('currenciesList', {
         selectFromResult: ({ data, isSuccess, }) => ({

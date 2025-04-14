@@ -1,4 +1,4 @@
-import { createSelector, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
+import { createSelector, createEntityAdapter, EntityState, EntityId } from '@reduxjs/toolkit'
 import { apiSlice } from '../../app/api/apiSlice'
 import { IProduct } from '../../types/IProduct'
 import { RootState } from "../../app/store"
@@ -10,6 +10,8 @@ export interface ProductsResponse {
     products: IProduct[];
 };
 export type IProductsCount = EntityState<IProduct> & { count: number }
+export type IAllProducts = EntityState<IProduct> & { products: IProduct[] } & { productsCount: number } & { resultPerPage: number } & { filteredProductsCount: number };
+export type IAllProductsEnter = { products: IProduct[] } & { productsCount: number } & { resultPerPage: number } & { filteredProductsCount: number };
 export type ICategoryIdQuery = { categoryId: string | undefined; query: string }
 
 const productsAdapter = createEntityAdapter({
@@ -19,6 +21,14 @@ const initialState = productsAdapter.getInitialState<IProductsCount>({
     ids: [],
     entities: {},
     count: 0
+})
+const initialAllState = productsAdapter.getInitialState<IAllProducts>({
+    ids: [],
+    entities: {},
+    products: [],
+    productsCount: 0,
+    resultPerPage: 0,
+    filteredProductsCount: 0
 })
 
 export const productsApiSlice = apiSlice.injectEndpoints({
@@ -106,18 +116,21 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         // }),
         addNewProduct: builder.mutation({
             query: (initialProductData) => {
-                const body = new FormData();
-                body.append('Content-Type', initialProductData.file.type);
-                body.append('productImg', initialProductData.file);
-                body.append('title', initialProductData.title);
-                body.append('description', initialProductData.description);
-                body.append('price', initialProductData.price.toString());
-                body.append('rating', initialProductData.rating.toString());
-                body.append('category', initialProductData.category);
+                // const body = new FormData();
+                // body.append('Content-Type', initialProductData.file.type);
+                // body.append('productImg', initialProductData.file);
+                // body.append('title', initialProductData.title);
+                // body.append('description', initialProductData.description);
+                // body.append('price', initialProductData.price.toString());
+                // body.append('rating', initialProductData.rating.toString());
+                // body.append('category', initialProductData.category);
                 return {
+                    // headers: {
+                    //     "Content-Type": "multipart/form-data",
+                    // },
                     url: '/products',
                     method: 'POST',
-                    body,
+                    body: initialProductData,
                 }
             },
             invalidatesTags: [
@@ -125,30 +138,12 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             ]
         }),
         updateProduct: builder.mutation({
-            query: initialProductData => {
-                if (!initialProductData.file)
-                    return {
-                        url: '/products',
-                        method: 'PATCH',
-                        body: {
-                            ...initialProductData,
-                        }
-                    }
-                else {
-                    const body = new FormData();
-                    body.append('Content-Type', initialProductData.file.type);
-                    body.append('productImg', initialProductData.file);
-                    body.append('id', initialProductData.id);
-                    body.append('title', initialProductData.title);
-                    body.append('description', initialProductData.description);
-                    body.append('price', initialProductData.price.toString());
-                    body.append('rating', initialProductData.rating.toString());
-                    body.append('category', initialProductData.category);
-                    return {
-                        url: '/products',
-                        method: 'PATCH',
-                        body,
-                    }
+            query: (initialProductData) => {
+
+                return {
+                    url: '/products',
+                    method: 'PATCH',
+                    body: initialProductData,
                 }
             },
             invalidatesTags: (result, error, arg) => [
@@ -165,12 +160,67 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 { type: 'Product', id: arg.id }
             ]
         }),
+        createProductReview: builder.mutation({
+            query: (myForm) => ({
+                url: `/products/review`,
+                method: 'PATCH',
+                body: myForm,
+            }),
+            invalidatesTags: [
+                { type: 'Product', id: "LIST" }
+            ]
+        }),
+        deleteProductReview: builder.mutation({
+            query: ({ productId, reviewId }) => ({
+                url: `/products/reviews/${productId}?id=${reviewId}`,
+                method: 'delete',
+                body: { productId },
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Product', id: arg.productId }
+            ]
+        }),
+        getAllProducts: builder.query<IAllProducts, string>({
+            query: (query = '') => ({
+                url: `/products/all/products/${query}`,
+                validateStatus: (response: { status: number; }, result: { isError: Boolean; }) => {
+                    return response.status === 200 && !result.isError
+                },
+            }),
+            // transformResponse: (responseData: IAllProductsEnter): IAllProducts => {
+            //     const loadedProduct = responseData?.products.map((product: IProduct) => {
+            //         product.id = product._id
+            //         return product
+            //     });
+
+
+            //     return productsAdapter.setAll(initialAllState, {
+            //         ids: loadedProduct.map(product => product._id),
+            //         entities: loadedProduct.forEach(product => {
+            //             return { product: product }
+            //         }),
+            //         productsCount: responseData.productsCount,
+            //         resultPerPage: responseData.resultPerPage,
+            //         filteredProductsCount: responseData.filteredProductsCount,
+
+            //     })
+            // },
+            providesTags: (result: IAllProducts | undefined, error, arg) => {
+                if (result?.ids) {
+                    return [
+                        { type: 'Product', id: 'LIST' },
+                        ...result.ids.map(id => ({ type: 'Product' as const, id }))
+                    ]
+                } else return [{ type: 'Product', id: 'LIST' }]
+            }
+        }),
     }),
 })
 
 export const { useGetProductsQuery, useAddNewProductMutation,
     useUpdateProductMutation, useGetCountQuery,
-    useDeleteProductMutation, useGetProductsByCategoryIdQuery,
+    useDeleteProductMutation, useGetProductsByCategoryIdQuery, useCreateProductReviewMutation,
+    useDeleteProductReviewMutation, useGetAllProductsQuery, useLazyGetAllProductsQuery
 } = productsApiSlice
 
 // returns the query result object

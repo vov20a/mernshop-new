@@ -328,6 +328,12 @@ ul {
 a.active {
   background: #01afd1 !important;
 }
+button.active {
+  background: #01afd1 !important;
+}
+.sort-button + .sort-button {
+  margin-left: 5px;
+}
 ul.kid-menu {
   padding: 0;
   margin: 0;
@@ -527,6 +533,7 @@ a.banner-matter {
   float: left;
   margin: 1.5em 0;
   padding: 0.7em 1em;
+  position: relative;
 }
 .grid-chain-bottom {
   border-top: 1px solid #ddd;
@@ -899,6 +906,11 @@ p.description {
   text-indent: -9999px;
   width: 75px;
   height: 75px;
+}
+.MuiDialogTitle-root + .css-ypiqx9-MuiDialogContent-root {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 /*--product--*
 /*--contact--*/
@@ -1394,8 +1406,8 @@ select.in-drop {
   background-color: var(--TABLE-BGCOLOR);
   color: var(--ERROR);
   padding: 0.25em;
-  margin-bottom: 0.5em;
   border: var(--ERROR) 2px solid;
+  margin: 0.5em 0px;
 }
 
 .errmsg a:any-link {
@@ -1554,7 +1566,7 @@ th {
   font-size: 1rem;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr 1fr;
   color: var(--TABLE-COLOR);
   gap: 0.1em;
 }
@@ -1562,15 +1574,29 @@ th {
   font-size: 1rem;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   color: var(--TABLE-COLOR);
   gap: 0.1em;
 }
+
 .table__orders {
   font-size: 1rem;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  color: var(--TABLE-COLOR);
+  gap: 0.1em;
+}
+.title__table__orders-my {
+  width: 100%;
+  margin: 0 auto;
+}
+.table__orders-my {
+  font-size: 10px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   color: var(--TABLE-COLOR);
   gap: 0.1em;
 }

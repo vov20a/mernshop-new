@@ -25,7 +25,7 @@ const ProductsPage = () => {
     React.useMemo(() => {
         setCurrentPage(1)
         setQuery(`?sort=${sort}&startProduct=0&limit=${limit}`)
-    }, [categoryId])
+    }, [limit, sort])
 
     const sortHandler = (sortValue: string) => {
         setSort(sortValue)
@@ -114,9 +114,9 @@ const ProductsPage = () => {
                                         <Col md={6}>
                                             <ul className="w_nav">
                                                 <li>Sort : </li>
-                                                <li><a onClick={() => sortHandler('rating')} className={activeClassRating}>rating</a></li> |
-                                                <li><a onClick={() => sortHandler('price')} className={activeClassPrice}  > price: Low High </a></li> |
-                                                <li><a onClick={() => sortHandler('title')} className={activeClassTitle}  > title</a></li>
+                                                <li className="sort-button"><button onClick={() => sortHandler('rating')} className={activeClassRating}>rating</button></li>
+                                                <li className="sort-button"><button onClick={() => sortHandler('price')} className={activeClassPrice}  >price: Low High</button></li>
+                                                <li className="sort-button"><button onClick={() => sortHandler('title')} className={activeClassTitle}  >title</button></li>
                                             </ul>
                                         </Col>
                                     </Row>

@@ -3,7 +3,6 @@ import EditUserForm from './EditUserForm'
 import { useGetUsersQuery } from './usersApiSlice'
 import PulseLoader from 'react-spinners/PulseLoader'
 import useTitle from '../../hooks/useTitle'
-import { IUser } from '../../types/IUserType'
 
 const EditUser = () => {
     useTitle('Edit User')

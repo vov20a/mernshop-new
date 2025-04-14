@@ -18,7 +18,6 @@ const UsersList: React.FC = () => {
 
     const currentCurrency = useSelector(selectCurrentCurrency)
 
-    const { pathname } = useLocation()
     const navigate = useNavigate();
 
     const [search, setSearch] = useState('')
@@ -28,7 +27,7 @@ const UsersList: React.FC = () => {
             navigate('/dash/products/search', { state: debounced })
             setSearch('')
         }
-    }, [debounced])
+    }, [debounced, navigate])
 
 
     const [limit] = React.useState(5)
@@ -132,6 +131,9 @@ const UsersList: React.FC = () => {
                             </th>
                             <th onClick={() => clickSort('rating')} scope="col" className={`table__th th_cursor ${activeClassRating}`}>
                                 Rating
+                            </th>
+                            <th scope="col" className={`table__th`}>
+                                Stock
                             </th>
                             <th scope="col" className="table__th">
                                 Category

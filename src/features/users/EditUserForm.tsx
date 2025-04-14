@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice"
 import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { ROLES } from "../../config/roles"
 import { IUser } from "../../types/IUserType"
+import { Button } from "react-bootstrap"
 
 const USER_REGEX = /^[A-z]{3,20}$/
-const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+const EMAIL_REGEX = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/
 
 interface EditUserFormProps {
@@ -15,6 +16,7 @@ interface EditUserFormProps {
 }
 
 const EditUserForm = ({ user }: EditUserFormProps) => {
+    const inputAvatarFileRef = useRef<HTMLInputElement>(null);
 
     const [updateUser, {
         isLoading,
@@ -38,6 +40,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
     const [password, setPassword] = useState('')
     const [validPassword, setValidPassword] = useState(false)
     const [roles, setRoles] = useState(user?.roles)
+    const [avatar, setAvatar] = useState<(string | ArrayBuffer | null)>('');
+    const [avatarPreview, setAvatarPreview] = useState<(string | ArrayBuffer | null)>('');
+    const [oldAvatar, setOldAvatar] = useState<string | undefined>(user?.avatar?.url);
 
 
     useEffect(() => {
@@ -58,10 +63,38 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
             setUsername('')
             setPassword('')
             setRoles([''])
+            setAvatar('')
+            setAvatarPreview('')
+            setOldAvatar('')
             navigate('/dash/users')
         }
 
     }, [isSuccess, isDelSuccess, navigate])
+
+    const updatedAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        let files: File[] = [];
+        if (event.target.files?.length === 1) {
+            const fileObj = event.target.files;
+            files = Object.values(fileObj);
+        }
+        setAvatar('');
+        setOldAvatar('');
+        setAvatarPreview('');
+
+        files.forEach((file) => {
+            const reader = new FileReader();
+            // const arr: ((prevState: string[]) => string[]) | (string | ArrayBuffer)[] = [];
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setAvatarPreview(reader.result);
+                    setAvatar(reader.result);
+                }
+            };
+            reader.readAsDataURL(file);//load in buffer
+        });
+    };
+
 
     const onUsernameChanged = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)
     const onEmailChanged = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
@@ -77,10 +110,14 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
 
     const onSaveUserClicked = async (e: React.MouseEvent<HTMLButtonElement>) => {
         if (password) {
-            await updateUser({ id: user?.id, username, email, password, roles })
+            await updateUser({ id: user?.id, username, email, password, roles, avatar })
         } else {
-            await updateUser({ id: user?.id, username, email, roles })
+            await updateUser({ id: user?.id, username, email, roles, avatar })
         }
+    }
+    const handleDeleteFile = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setAvatarPreview('');
+        setAvatar('')
     }
 
     const onDeleteUserClicked = async () => {
@@ -138,6 +175,30 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                         </button>
                     </div>
                 </div>
+                <div>
+                    <input
+                        ref={inputAvatarFileRef}
+                        type="file"
+                        name="avatar"
+                        accept="image/*"
+                        onChange={updatedAvatarChange}
+                        hidden
+                    />
+                </div>
+                <div>
+                    {oldAvatar && <img width='150px' src={oldAvatar as string} alt="Avatar Preview" />}
+                </div>
+                <div>
+                    {avatar && <img width='150px' src={avatar as string} alt="Avatar Preview" />}
+                </div>
+
+                {!avatar && <Button onClick={() => { if (inputAvatarFileRef.current) inputAvatarFileRef.current.click() }} variant="success">
+                    Загрузить картинку
+                </Button>}
+                {avatar && <Button onClick={handleDeleteFile} variant="danger">
+                    Удалить картинку
+                </Button>}
+
                 <label className="form__label" htmlFor="username">
                     Username: <span className="nowrap">[3-20 letters]</span></label>
                 <input

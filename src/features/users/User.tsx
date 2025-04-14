@@ -32,13 +32,14 @@ const User = ({ userId }: UserProps) => {
 
     return (
       <tr className="table__row user" >
-        <td className={`table__cell ${cellStatus}`}> {
-          //@ts-ignore
-          user.username} </td>
-        <td className={`table__cell ${cellStatus}`
-        }> {userRolesString} </td>
-        < td className={`table__cell ${cellStatus}`
-        }>
+        <td className={`table__cell ${cellStatus}`}> <img width='50px' src={user.avatar?.url} alt='avatar' /> </td>
+
+        <td className={`table__cell ${cellStatus}`}> {user.username} </td>
+
+        <td className={`table__cell ${cellStatus}`}> {userRolesString} </td>
+
+        < td className={`table__cell ${cellStatus}`}>
+
           <button className="icon-button table__button" onClick={handleEdit} >
             <FontAwesomeIcon icon={faPenToSquare} />
           </button>

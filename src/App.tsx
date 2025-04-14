@@ -38,6 +38,10 @@ import EditCurrency from './features/currencies/EditCurrency';
 import PreCurrenciesList from './features/currencies/PreCurrenciesList';
 import CurrenciesList from './features/currencies/CurrenciesList';
 import PrefetchCurrencies from './features/currencies/PrefetchCurrencies';
+import UserOptions from './features/users/UserOptions';
+import MyOrders from './pages/MyOrders';
+import MyCart from './pages/MyCart';
+import ProductsListAll from './features/products/ProductsListAll';
 
 
 
@@ -57,57 +61,63 @@ function App() {
         {/* Protected Routes */}
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}>
-            <Route element={<Prefetch />}>
-              <Route element={<PrefetchCurrencies />}>
+            <Route element={<UserOptions />}>
+              <Route element={<Prefetch />}>
+                <Route element={<PrefetchCurrencies />}>
 
-                {/* private routes */}
-                <Route path='home' element={<Home />} />
-                <Route path='categories/:categoryId' element={<ProductsPage />} />
-                <Route path='products/:productId' element={<SingleProductPage />} />
-                <Route path='cart' element={<CartPage />} />
-                <Route path='account' element={<AccountPage />} />
-                <Route path='search' element={<SearchPage />} />
+                  {/* private routes */}
+                  <Route path='home' element={<Home />} />
+                  <Route path='categories/:categoryId' element={<ProductsPage />} />
+                  <Route path='products/:productId' element={<SingleProductPage />} />
+                  <Route path='cart' element={<CartPage />} />
+                  <Route path='account' element={<AccountPage />} />
+                  <Route path='search' element={<SearchPage />} />
+                  <Route path='orders' element={<MyOrders />} />
+                  <Route path='cart/my' element={<MyCart />} />
 
-                <Route element={<RequireAuth allowedRoles={[ROLES.Manager, ROLES.Admin]} />}>
-                  <Route path="dash" element={<DashLayout />}>
-                    <Route index element={<Welcome />} />
 
-                    <Route path="users">
-                      <Route index element={<UsersList />} />
-                      <Route path="new" element={<NewUserForm />} />
-                      <Route path=':id' element={<EditUser />} />
+                  <Route element={<RequireAuth allowedRoles={[ROLES.Manager, ROLES.Admin]} />}>
+                    <Route path="dash" element={<DashLayout />}>
+                      <Route index element={<Welcome />} />
+
+                      <Route path="users">
+                        <Route index element={<UsersList />} />
+                        <Route path="new" element={<NewUserForm />} />
+                        <Route path=':id' element={<EditUser />} />
+                      </Route>
+
+                      <Route path="products">
+                        <Route index element={<ProductsList />} />
+                        <Route path="all" element={<ProductsListAll />} />
+                        <Route path="new" element={<NewProductForm />} />
+                        <Route path="search" element={<SearchProducts />} />
+                        <Route path=':id' element={<EditProduct />} />
+                        <Route path='cat/:categoryId' element={<ProductListOfCategory />} />
+                      </Route>
+
+                      <Route path="categories">
+                        <Route index element={<CategoriesList />} />
+                        <Route path="new" element={<NewCategory />} />
+                        <Route path=':id' element={<EditCategory />} />
+                      </Route>
+
+                      <Route path="orders">
+                        <Route index element={<OrdersList />} />
+                        <Route path="new" element={<NewOrder />} />
+                        <Route path=':id' element={<EditOrder />} />
+                      </Route>
+
+                      <Route path="currencies">
+                        <Route index element={<PreCurrenciesList />} />
+                        <Route path="value" element={<CurrenciesList />} />
+                        <Route path="new" element={<NewCurrencyForm />} />
+                        <Route path=':id' element={<EditCurrency />} />
+                      </Route>
+
+
                     </Route>
-
-                    <Route path="products">
-                      <Route index element={<ProductsList />} />
-                      <Route path="new" element={<NewProductForm />} />
-                      <Route path="search" element={<SearchProducts />} />
-                      <Route path=':id' element={<EditProduct />} />
-                      <Route path='cat/:categoryId' element={<ProductListOfCategory />} />
-                    </Route>
-
-                    <Route path="categories">
-                      <Route index element={<CategoriesList />} />
-                      <Route path="new" element={<NewCategory />} />
-                      <Route path=':id' element={<EditCategory />} />
-                    </Route>
-
-                    <Route path="orders">
-                      <Route index element={<OrdersList />} />
-                      <Route path="new" element={<NewOrder />} />
-                      <Route path=':id' element={<EditOrder />} />
-                    </Route>
-
-                    <Route path="currencies">
-                      <Route index element={<PreCurrenciesList />} />
-                      <Route path="value" element={<CurrenciesList />} />
-                      <Route path="new" element={<NewCurrencyForm />} />
-                      <Route path=':id' element={<EditCurrency />} />
-                    </Route>
-
 
                   </Route>
-
                 </Route>
               </Route>
             </Route>
@@ -116,7 +126,7 @@ function App() {
         <Route path='*' element={<PageNotFound />} />
       </Route>
     </Routes >
-  );
+  )
 }
 
-export default App;
+export default App

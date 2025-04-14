@@ -4,4 +4,8 @@ export interface IUser {
     _id: string;
     id: string;
     roles: string[];
+    avatar?: {
+        public_id: string,
+        url: string,
+    },
 }

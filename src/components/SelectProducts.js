@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Select, { ActionMeta } from 'react-select';
+import Select from 'react-select';
 import { defaultSelectArray } from '../utils/defaultSelectArray';
 import { optionToProduct } from '../utils/optionToProductIds';
 
